@@ -1,6 +1,8 @@
 package com.bm.blackMart.service.product;
 
+import com.bm.blackMart.exceptions.ProductNotFoundException;
 import com.bm.blackMart.model.Product;
+import com.bm.blackMart.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +11,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProductService implements IProductService{
-//    private ProductRespository productRespository;
+    private ProductRepository productRepository;
     @Override
     public Product addProduct(Product product) {
         return null;
@@ -17,8 +19,7 @@ public class ProductService implements IProductService{
 
     @Override
     public Product getProductById(Long id) {
-//        return productRespository.findById(id).orElse(()->new ProductNotFoundException("Product not found for id " + id));
-        return null;
+        return productRepository.findById(id).orElseThrow(()->new ProductNotFoundException("Product not found for id " + id));
     }
 
     @Override
@@ -27,42 +28,42 @@ public class ProductService implements IProductService{
     }
 
     @Override
-    public void deleteProduct(Product product) {
-
+    public void deleteProduct(Long id) {
+        productRepository.findById(id).ifPresentOrElse(productRepository::delete,()->{throw new ProductNotFoundException("product not found!");});
     }
 
     @Override
     public List<Product> getAllProducts() {
-        return List.of();
+        return productRepository.findAll();
     }
 
     @Override
     public List<Product> getProductsByCategory(String category) {
-        return List.of();
+        return productRepository.findByCategoryName(category);
     }
 
     @Override
     public List<Product> getProductsByBrand(String brand) {
-        return List.of();
+        return productRepository.findByBrand(brand);
     }
 
     @Override
     public List<Product> getProductsByCategoryAndBrand(String category, String brand) {
-        return List.of();
+        return productRepository.findByCategoryNameAndBrand(category,brand);
     }
 
     @Override
     public List<Product> getProductsByName(String name) {
-        return List.of();
+        return productRepository.findByName(name);
     }
 
     @Override
     public List<Product> getProductsByBrandAndName(String brand, String name) {
-        return List.of();
+        return productRepository.findByBrandAndName(brand,name);
     }
 
     @Override
     public Long countProductsByBrandAndName(String brand, String name) {
-       return null;
+       return productRepository.countByBrandAndName(brand,name);
     }
 }
